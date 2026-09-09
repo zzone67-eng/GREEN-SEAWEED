@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="theme-color" content="#F4F5EF" />
-<title>GREEN SEAWEED — Booth Experience</title>
+<title>GREEN SEAWEED</title>
 <style>
 :root{
   --bg:#F4F5EF;
@@ -427,7 +427,94 @@ h1 .green{color:var(--green-dark)}
   .trashCard,.trashCardInner,.bin{transition-duration:.01ms !important;animation-duration:.01ms !important}
 }
 
+
+.secretResetHit{
+  position:absolute;
+  right:0;
+  bottom:0;
+  width:78px;
+  height:78px;
+  z-index:80;
+  border:0;
+  padding:0;
+  margin:0;
+  background:transparent;
+  opacity:0;
+  touch-action:none;
+  -webkit-user-select:none;
+  user-select:none;
+}
+.secretResetToast{
+  position:absolute;
+  left:50%;
+  bottom:48px;
+  transform:translateX(-50%) translateY(8px);
+  z-index:90;
+  padding:10px 14px;
+  border-radius:999px;
+  background:rgba(16,23,19,.92);
+  color:#fff;
+  font-size:12px;
+  font-weight:850;
+  letter-spacing:-.02em;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .18s ease,transform .18s ease;
+}
+.secretResetToast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+
+.trashSvg{
+  width:56px;
+  height:56px;
+  display:block;
+  overflow:visible;
+}
+.trashSvg svg{
+  width:100%;
+  height:100%;
+  display:block;
+}
+.trashSvg *{
+  vector-effect:non-scaling-stroke;
+}
+.trashCard .label{
+  font-size:clamp(11px,1.7vw,14px) !important;
+  letter-spacing:-.04em !important;
+}
+.trashCard .sub{
+  font-size:clamp(6px,.95vw,8px) !important;
+  letter-spacing:.06em !important;
+}
+
 </style>
+
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+
+<meta name="application-name" content="GREEN SEAWEED">
+<meta name="apple-mobile-web-app-title" content="GREEN SEAWEED">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+
+
+<style>
+html,body{
+  overscroll-behavior:none;
+  -webkit-touch-callout:none;
+}
+@media (display-mode: standalone){
+  body{min-height:100dvh;}
+}
+</style>
+
 </head>
 <body>
 <div id="app">
@@ -491,18 +578,22 @@ h1 .green{color:var(--green-dark)}
   </div>
 </div>
 
+
+  <button class="secretResetHit" id="secretResetHit" aria-label="숨겨진 방문객 초기화"></button>
+  <div class="secretResetToast" id="secretResetToast">방문객 수가 초기화되었습니다.</div>
+
 <script>
 (() => {
   const SAVE_KEY = "green_seaweed_booth_responsive_v2";
   const LEGACY_KEYS = [SAVE_KEY,"green_seaweed_booth_portrait_v1","green_seaweed_booth_v5","greensweet_booth_v4","greensweet_booth_v3","greensweet_booth_v2","greensweet_booth_v1"];
   const defaults = { visitors:0, gramsPerPlay:30 };
   const TYPES = [
-    {type:"bottle",label:"PLASTIC",sub:"BOTTLE"},
-    {type:"can",label:"METAL",sub:"CAN"},
-    {type:"cup",label:"PAPER CUP",sub:"CUP"},
-    {type:"box",label:"BOX",sub:"PACKAGE"},
-    {type:"paper",label:"PAPER",sub:"SHEET"},
-    {type:"wrapper",label:"WRAPPER",sub:"SNACK"}
+    {type:"bottle",label:"페트병",sub:"PET BOTTLE"},
+    {type:"can",label:"캔",sub:"ALUMINUM CAN"},
+    {type:"cup",label:"종이컵",sub:"PAPER CUP"},
+    {type:"box",label:"종이상자",sub:"CARDBOARD BOX"},
+    {type:"paper",label:"종이",sub:"PAPER"},
+    {type:"wrapper",label:"과자봉지",sub:"SNACK WRAPPER"}
   ];
 
   const playPane=document.getElementById("playPane");
@@ -541,6 +632,63 @@ h1 .green{color:var(--green-dark)}
   function shuffle(a){
     a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;
   }
+  function iconSVG(type){
+    const common = 'fill="none" stroke="#101713" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"';
+    const green = '#38E36C';
+    const pale = '#CFF5D8';
+
+    const icons = {
+      bottle: `<div class="trashSvg">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <path ${common} fill="${green}" d="M26 5h12v9l5 6v30c0 6-4 9-11 9s-11-3-11-9V20l5-6V5Z"/>
+          <path ${common} d="M26 10h12M24 28h16"/>
+        </svg>
+      </div>`,
+
+      can: `<div class="trashSvg">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <ellipse ${common} fill="${pale}" cx="32" cy="12" rx="15" ry="6"/>
+          <path ${common} fill="${green}" d="M17 12v39c0 4 7 7 15 7s15-3 15-7V12"/>
+          <ellipse ${common} cx="32" cy="51" rx="15" ry="6"/>
+          <path ${common} d="M26 11c2-2 9-2 12 0"/>
+        </svg>
+      </div>`,
+
+      cup: `<div class="trashSvg">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <path ${common} fill="${pale}" d="M21 18h25l-3 37c-.3 3-3 5-6 5H28c-3 0-5.7-2-6-5l-3-37Z"/>
+          <path ${common} fill="${green}" d="M17 13h31v8H17z"/>
+          <path ${common} d="M37 13l5-8"/>
+        </svg>
+      </div>`,
+
+      box: `<div class="trashSvg">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <path ${common} fill="${green}" d="M11 23 32 12l21 11v27L32 61 11 50V23Z"/>
+          <path ${common} d="M11 23l21 11 21-11M32 34v27"/>
+          <path ${common} fill="${pale}" d="M11 23 23 8l20 4 10 11-21 11-21-11Z"/>
+        </svg>
+      </div>`,
+
+      paper: `<div class="trashSvg">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <path ${common} fill="#F8FAF7" d="M16 6h25l10 10v42H16V6Z"/>
+          <path ${common} fill="${pale}" d="M41 6v12h10"/>
+          <path ${common} d="M24 29h18M24 38h18M24 47h12"/>
+        </svg>
+      </div>`,
+
+      wrapper: `<div class="trashSvg">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <path ${common} fill="${green}" d="M11 17l7-6 6 5 8-5 8 5 7-5 6 6-4 6 4 18-6 7-7-5-8 5-8-5-7 5-6-7 4-18-4-6Z"/>
+          <path ${common} d="M20 25h24M23 35h18"/>
+        </svg>
+      </div>`
+    };
+
+    return icons[type] || '';
+  }
+
   function iconExtra(type){
     if(type==="box")return '<div class="stripe"></div>';
     if(type==="paper")return '<div class="line1"></div><div class="line2"></div>';
@@ -577,7 +725,7 @@ h1 .green{color:var(--green-dark)}
     el.style.setProperty("--idleDelay",(-Math.random()*2.4).toFixed(2)+"s");
     el.style.setProperty("--idleDur",(3.0+Math.random()*1.7).toFixed(2)+"s");
     el.style.setProperty("--floatX",((Math.random()>.5?1:-1)*(1.5+Math.random()*2.5)).toFixed(1)+"px");
-    el.innerHTML=`<div class="trashCardInner"><div class="trashIcon">${iconExtra(def.type)}</div><div class="label">${def.label}</div><div class="sub">${def.sub}</div></div>`;
+    el.innerHTML=`<div class="trashCardInner">${iconSVG(def.type)}<div class="label">${def.label}</div><div class="sub">${def.sub}</div></div>`;
     bindTrash(el);return el;
   }
 
@@ -707,6 +855,42 @@ h1 .green{color:var(--green-dark)}
     data.visitors=Math.max(0,Math.floor(Number(document.getElementById("visitorInput").value)||0));save();renderStats();adminPanel.classList.remove("show");
   });
   document.getElementById("resetBtn").addEventListener("click",()=>{if(confirm("참여 기록을 초기화할까요?")){data={...defaults};save();renderStats();buildTrashSet();adminPanel.classList.remove("show");}});
+
+  /* 숨겨진 방문객 초기화: 화면 우측 하단 모서리를 2초간 길게 누르기 */
+  const secretResetHit=document.getElementById("secretResetHit");
+  const secretResetToast=document.getElementById("secretResetToast");
+  let secretResetTimer=null;
+
+  function cancelSecretReset(){
+    if(secretResetTimer){
+      clearTimeout(secretResetTimer);
+      secretResetTimer=null;
+    }
+  }
+
+  function showSecretResetToast(){
+    secretResetToast.classList.add("show");
+    setTimeout(()=>secretResetToast.classList.remove("show"),1800);
+  }
+
+  secretResetHit.addEventListener("pointerdown",e=>{
+    e.preventDefault();
+    cancelSecretReset();
+    secretResetTimer=setTimeout(()=>{
+      secretResetTimer=null;
+      if(confirm("방문객 수와 누적 CO₂를 0으로 초기화할까요?")){
+        data.visitors=0;
+        save();
+        renderStats();
+        showSecretResetToast();
+      }
+    },2000);
+  },{passive:false});
+
+  ["pointerup","pointercancel","pointerleave"].forEach(ev=>{
+    secretResetHit.addEventListener(ev,cancelSecretReset);
+  });
+
 
   /* 화면 크기/회전 변경 시 새 라운드가 시작되지 않은 경우만 현재 카드 위치를 다시 안전하게 배치 */
   function relayoutUndropped(){
