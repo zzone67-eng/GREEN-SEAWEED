@@ -324,8 +324,8 @@ h1 .green{color:var(--green-dark)}
   left:50%;
   bottom:calc(30px + 2.2%);
   transform:translateX(-50%);
-  width:min(70%,520px);
-  height:38%;
+  width:min(60%,440px);
+  height:35%;
   min-height:0;
   display:flex;
   align-items:flex-end;
@@ -336,10 +336,10 @@ h1 .green{color:var(--green-dark)}
 .bin{
   position:relative;
   z-index:2;
-  width:74%;
-  height:72%;
-  min-height:clamp(170px,21dvh,250px);
-  max-height:280px;
+  width:68%;
+  height:68%;
+  min-height:clamp(145px,18dvh,215px);
+  max-height:235px;
   border-radius:clamp(28px,5vw,42px);
   background:var(--ink);
   box-shadow:clamp(8px,1.8vw,12px) clamp(8px,1.8vw,12px) 0 var(--green);
@@ -348,7 +348,7 @@ h1 .green{color:var(--green-dark)}
   justify-content:center;
   pointer-events:auto;
 }
-.bin::before{content:"";position:absolute;top:-25px;width:108%;height:clamp(42px,6vw,52px);border:2px solid var(--ink);border-radius:18px;background:var(--green);pointer-events:none}
+.bin::before{content:"";position:absolute;top:-25px;width:106%;height:clamp(38px,5.5vw,48px);border:2px solid var(--ink);border-radius:18px;background:var(--green);pointer-events:none}
 .slot{position:absolute;top:-11px;width:64%;height:15px;background:var(--ink);border-radius:999px;pointer-events:none}
 .binText{text-align:center;color:white;line-height:.88;pointer-events:none}
 .binText strong{display:block;font-size:clamp(34px,min(7vw,5.3dvh),58px);letter-spacing:-.08em;font-weight:1000}
@@ -490,6 +490,162 @@ h1 .green{color:var(--green-dark)}
   letter-spacing:.06em !important;
 }
 
+
+/* ===== GREEN SEAWEED GAME FUN FX ===== */
+.fxLayer{
+  position:absolute;
+  inset:0 0 30px 0;
+  z-index:24;
+  pointer-events:none;
+  overflow:hidden;
+}
+.carbonPop{
+  position:absolute;
+  z-index:3;
+  font-size:clamp(24px,5vw,42px);
+  font-weight:1000;
+  letter-spacing:-.07em;
+  color:var(--green-dark);
+  text-shadow:0 5px 0 rgba(255,255,255,.78);
+  transform:translate(-50%,-50%);
+  animation:carbonPop .78s cubic-bezier(.18,.85,.25,1) forwards;
+}
+@keyframes carbonPop{
+  0%{opacity:0;transform:translate(-50%,-20%) scale(.55) rotate(-6deg)}
+  26%{opacity:1;transform:translate(-50%,-70%) scale(1.12) rotate(3deg)}
+  72%{opacity:1;transform:translate(-50%,-112%) scale(1) rotate(-1deg)}
+  100%{opacity:0;transform:translate(-50%,-155%) scale(.86)}
+}
+
+.comboPop{
+  position:absolute;
+  left:50%;
+  top:46%;
+  z-index:4;
+  padding:9px 16px 10px;
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:var(--green);
+  color:var(--ink);
+  box-shadow:6px 6px 0 var(--ink);
+  font-size:clamp(16px,3vw,25px);
+  font-weight:1000;
+  letter-spacing:-.05em;
+  transform:translate(-50%,-50%) scale(.5) rotate(-4deg);
+  opacity:0;
+  white-space:nowrap;
+}
+.comboPop.show{animation:comboShow .72s cubic-bezier(.2,.9,.22,1) forwards}
+@keyframes comboShow{
+  0%{opacity:0;transform:translate(-50%,-35%) scale(.5) rotate(-5deg)}
+  25%{opacity:1;transform:translate(-50%,-50%) scale(1.12) rotate(2deg)}
+  72%{opacity:1;transform:translate(-50%,-58%) scale(1) rotate(-1deg)}
+  100%{opacity:0;transform:translate(-50%,-76%) scale(.92)}
+}
+
+.bubbleFx{
+  position:absolute;
+  width:var(--bubbleSize,12px);
+  height:var(--bubbleSize,12px);
+  border:2px solid rgba(12,143,67,.55);
+  background:rgba(255,255,255,.52);
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  animation:bubbleRise var(--bubbleDur,.9s) cubic-bezier(.25,.6,.3,1) forwards;
+}
+@keyframes bubbleRise{
+  0%{opacity:0;transform:translate(-50%,-10%) scale(.4)}
+  20%{opacity:1}
+  100%{opacity:0;transform:translate(calc(-50% + var(--drift,0px)),-115px) scale(1.12)}
+}
+
+/* 쓰레기통 뒤쪽에만 자라서 기존 정보 레이어와 충돌하지 않음 */
+.seaweedGarden{
+  position:absolute;
+  left:3%;
+  right:3%;
+  bottom:30px;
+  height:31%;
+  z-index:1;
+  pointer-events:none;
+  overflow:hidden;
+}
+.weed{
+  position:absolute;
+  bottom:-5px;
+  left:var(--weedX);
+  width:18px;
+  height:var(--weedH);
+  border:3px solid var(--ink);
+  border-bottom:0;
+  border-radius:999px 999px 46% 46%;
+  background:var(--green);
+  transform-origin:50% 100%;
+  transform:scaleY(0) rotate(var(--weedR));
+  opacity:0;
+  transition:transform .62s cubic-bezier(.18,1.35,.3,1),opacity .2s ease;
+}
+.weed::before,.weed::after{
+  content:"";
+  position:absolute;
+  width:25px;
+  height:15px;
+  border:3px solid var(--ink);
+  background:#BDF4CB;
+  border-radius:999px;
+}
+.weed::before{
+  left:-21px;
+  top:45%;
+  transform:rotate(-24deg);
+}
+.weed::after{
+  right:-21px;
+  top:27%;
+  transform:rotate(24deg);
+}
+.weed.grown{
+  opacity:1;
+  transform:scaleY(1) rotate(var(--weedR));
+}
+.seaweedGarden.bloom .weed.grown{
+  animation:seaweedWave .72s ease-in-out 1;
+}
+@keyframes seaweedWave{
+  0%,100%{filter:none}
+  45%{filter:drop-shadow(0 0 10px rgba(56,227,108,.58))}
+}
+@media (max-height:700px){
+  .seaweedGarden{height:27%}
+  .comboPop{top:44%}
+}
+@media (prefers-reduced-motion:reduce){
+  .carbonPop,.comboPop,.bubbleFx,.weed{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+
+
+/* ===== THROW / BOUNCE PHYSICS ===== */
+.trashCard.coasting{
+  cursor:grab;
+  transition:none !important;
+  will-change:left,top,transform;
+}
+.trashCard.coasting .trashCardInner{
+  animation:none !important;
+  transform:scale(1.015);
+  transition:none !important;
+}
+.trashCard.wallHit{
+  filter:drop-shadow(0 5px 0 rgba(16,23,19,.12));
+}
+.bin.aimPulse{
+  animation:aimPulse .34s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes aimPulse{
+  0%,100%{transform:scale(1)}
+  45%{transform:scale(1.035)}
+}
+
 </style>
 
 <link rel="icon" href="favicon.ico" sizes="any">
@@ -540,6 +696,19 @@ html,body{
         <div class="remainingBadge" id="remainingBadge">REMAINING <strong id="remainingCount">6</strong></div>
         <div class="bigGhost">DROP</div>
         <div class="trashCluster" id="trashCluster"></div>
+
+        <div class="seaweedGarden" id="seaweedGarden" aria-hidden="true">
+          <i class="weed" style="--weedX:7%;--weedH:42%;--weedR:-7deg"></i>
+          <i class="weed" style="--weedX:21%;--weedH:58%;--weedR:5deg"></i>
+          <i class="weed" style="--weedX:35%;--weedH:48%;--weedR:-3deg"></i>
+          <i class="weed" style="--weedX:65%;--weedH:53%;--weedR:4deg"></i>
+          <i class="weed" style="--weedX:79%;--weedH:62%;--weedR:-5deg"></i>
+          <i class="weed" style="--weedX:92%;--weedH:44%;--weedR:7deg"></i>
+        </div>
+
+        <div class="fxLayer" id="fxLayer" aria-hidden="true">
+          <div class="comboPop" id="comboPop">NICE!</div>
+        </div>
         
         <div class="binWrap">
           
@@ -606,11 +775,18 @@ html,body{
   const deltaText=document.getElementById("deltaText");
   const remainingCount=document.getElementById("remainingCount");
   const remainingBadge=document.getElementById("remainingBadge");
+  const fxLayer=document.getElementById("fxLayer");
+  const comboPop=document.getElementById("comboPop");
+  const seaweedGarden=document.getElementById("seaweedGarden");
+  const weeds=[...seaweedGarden.querySelectorAll(".weed")];
 
   let data=load();
   let locked=false,dragging=false,activeTrash=null;
   let grabX=0,grabY=0,remaining=TYPES.length;
   let layoutTimer=null;
+  let lastPointerX=0,lastPointerY=0,lastPointerTime=0,dragAngle=0;
+  let releaseVX=0,releaseVY=0;
+  let droppedThisRound=0,lastSuccessfulDropAt=0,comboCount=0;
 
   function load(){
     for(const key of LEGACY_KEYS){
@@ -729,7 +905,89 @@ html,body{
     bindTrash(el);return el;
   }
 
+  function resetFunFX(){
+    droppedThisRound=0;
+    comboCount=0;
+    lastSuccessfulDropAt=0;
+    weeds.forEach(w=>w.classList.remove("grown"));
+    seaweedGarden.classList.remove("bloom");
+    fxLayer.querySelectorAll(".carbonPop,.bubbleFx").forEach(el=>el.remove());
+    comboPop.classList.remove("show");
+  }
+
+  function growSeaweed(stage){
+    const index=Math.min(weeds.length-1,Math.max(0,stage-1));
+    if(weeds[index]) weeds[index].classList.add("grown");
+    if(stage>=TYPES.length){
+      seaweedGarden.classList.remove("bloom");
+      void seaweedGarden.offsetWidth;
+      seaweedGarden.classList.add("bloom");
+    }
+  }
+
+  function itemCarbonText(){
+    const each=data.gramsPerPlay/TYPES.length;
+    const value=Math.abs(each-Math.round(each))<.01?Math.round(each):each.toFixed(1);
+    return "-"+value+"g";
+  }
+
+  function showCarbonPop(){
+    const pane=playPane.getBoundingClientRect();
+    const b=bin.getBoundingClientRect();
+    const pop=document.createElement("div");
+    pop.className="carbonPop";
+    pop.textContent=itemCarbonText();
+    pop.style.left=(b.left-pane.left+b.width*.5)+"px";
+    pop.style.top=(b.top-pane.top+8)+"px";
+    fxLayer.appendChild(pop);
+    setTimeout(()=>pop.remove(),850);
+  }
+
+  function showBubbles(){
+    const pane=playPane.getBoundingClientRect();
+    const b=bin.getBoundingClientRect();
+    for(let i=0;i<5;i++){
+      const bubble=document.createElement("i");
+      bubble.className="bubbleFx";
+      bubble.style.left=(b.left-pane.left+b.width*(.32+Math.random()*.36))+"px";
+      bubble.style.top=(b.top-pane.top+10+Math.random()*14)+"px";
+      bubble.style.setProperty("--bubbleSize",(7+Math.random()*10).toFixed(0)+"px");
+      bubble.style.setProperty("--drift",(-28+Math.random()*56).toFixed(0)+"px");
+      bubble.style.setProperty("--bubbleDur",(.72+Math.random()*.42).toFixed(2)+"s");
+      fxLayer.appendChild(bubble);
+      setTimeout(()=>bubble.remove(),1250);
+    }
+  }
+
+  function showCombo(isFinal=false){
+    const now=performance.now();
+    if(now-lastSuccessfulDropAt<2600) comboCount++;
+    else comboCount=1;
+    lastSuccessfulDropAt=now;
+
+    let label="NICE!";
+    if(comboCount===2) label="GOOD!";
+    else if(comboCount===3) label="GREAT!";
+    else if(comboCount===4) label="WOW!";
+    else if(comboCount>=5) label="AMAZING!";
+    if(isFinal) label="CLEAN!";
+
+    comboPop.textContent=label;
+    comboPop.classList.remove("show");
+    void comboPop.offsetWidth;
+    comboPop.classList.add("show");
+  }
+
+  function playDropFX(isFinal){
+    droppedThisRound++;
+    growSeaweed(droppedThisRound);
+    showCarbonPop();
+    showBubbles();
+    showCombo(isFinal);
+  }
+
   function buildTrashSet(){
+    resetFunFX();
     trashCluster.innerHTML="";
     const defs=shuffle(TYPES),homes=responsiveHomes(defs.length);
     defs.forEach((def,i)=>trashCluster.appendChild(createTrashCard(def,homes[i])));
@@ -740,7 +998,15 @@ html,body{
     el.addEventListener("pointerdown",e=>{
       if(locked||el.dataset.dropped==="true")return;
       e.preventDefault();e.stopPropagation();
+
+      if(el._throwRAF){
+        cancelAnimationFrame(el._throwRAF);
+        el._throwRAF=null;
+      }
+      el.classList.remove("coasting","wallHit");
+
       dragging=true;activeTrash=el;
+      releaseVX=0;releaseVY=0;
       const rect=el.getBoundingClientRect();grabX=e.clientX-rect.left;grabY=e.clientY-rect.top;
       lastPointerX=e.clientX;lastPointerY=e.clientY;lastPointerTime=performance.now();dragAngle=Number(el.dataset.homeR)||0;
       el.classList.remove("returning","dropping");
@@ -761,7 +1027,12 @@ html,body{
       const now=performance.now();
       const dt=Math.max(8,now-lastPointerTime);
       const vx=(e.clientX-lastPointerX)/dt;
-      const targetAngle=Math.max(-9,Math.min(9,vx*18));
+      const vy=(e.clientY-lastPointerY)/dt;
+
+      releaseVX=releaseVX*.56+vx*.44;
+      releaseVY=releaseVY*.56+vy*.44;
+
+      const targetAngle=Math.max(-10,Math.min(10,vx*19));
       dragAngle+=(targetAngle-dragAngle)*.32;
 
       el.style.left=x+"px";
@@ -774,7 +1045,11 @@ html,body{
     const finish=e=>{
       if(!dragging||activeTrash!==el)return;
       if(e)e.preventDefault();dragging=false;el.classList.remove("dragging");
-      if(overlapsBin(el))dropTrash(el);else resetOne(el);
+      if(overlapsBin(el)){
+        dropTrash(el);
+      }else{
+        throwTrash(el,releaseVX,releaseVY);
+      }
       activeTrash=null;
     };
     el.addEventListener("pointerup",finish,{passive:false});
@@ -782,13 +1057,138 @@ html,body{
     el.addEventListener("lostpointercapture",()=>{if(dragging&&activeTrash===el)finish();});
   }
 
+  function throwTrash(el,vx,vy){
+    if(el.dataset.dropped==="true") return;
+
+    const startSpeed=Math.hypot(vx,vy);
+
+    // 거의 움직이지 않고 놓은 경우는 기존처럼 원위치
+    if(startSpeed<0.18){
+      resetOne(el);
+      return;
+    }
+
+    el.classList.remove("returning","dragging");
+    el.classList.add("coasting");
+    el.style.zIndex=18;
+
+    const clusterRect=trashCluster.getBoundingClientRect();
+    const paneRect=playPane.getBoundingClientRect();
+
+    const minX=paneRect.left-clusterRect.left;
+    const minY=paneRect.top-clusterRect.top;
+    const maxX=paneRect.right-clusterRect.left-el.offsetWidth;
+    // 하단 안내바를 침범하지 않도록 살짝 여유
+    const maxY=paneRect.bottom-clusterRect.top-el.offsetHeight-30;
+
+    let x=parseFloat(el.style.left)||0;
+    let y=parseFloat(el.style.top)||0;
+
+    // px/ms 단위. 너무 과한 플릭은 제어
+    vx=Math.max(-1.75,Math.min(1.75,vx*1.28));
+    vy=Math.max(-1.75,Math.min(1.75,vy*1.28));
+
+    let angle=dragAngle;
+    let last=performance.now();
+    const started=last;
+    let wallCooldown=0;
+
+    const frame=(now)=>{
+      if(el.dataset.dropped==="true"){
+        el._throwRAF=null;
+        return;
+      }
+
+      const dt=Math.min(32,Math.max(8,now-last));
+      last=now;
+
+      x+=vx*dt;
+      y+=vy*dt;
+
+      let bounced=false;
+
+      if(x<=minX){
+        x=minX;
+        vx=Math.abs(vx)*.74;
+        bounced=true;
+      }else if(x>=maxX){
+        x=maxX;
+        vx=-Math.abs(vx)*.74;
+        bounced=true;
+      }
+
+      if(y<=minY){
+        y=minY;
+        vy=Math.abs(vy)*.74;
+        bounced=true;
+      }else if(y>=maxY){
+        y=maxY;
+        vy=-Math.abs(vy)*.74;
+        bounced=true;
+      }
+
+      if(bounced && now>wallCooldown){
+        wallCooldown=now+100;
+        el.classList.remove("wallHit");
+        void el.offsetWidth;
+        el.classList.add("wallHit");
+        setTimeout(()=>el.classList.remove("wallHit"),120);
+      }
+
+      // 관성 감속
+      const friction=Math.pow(.978,dt/16.67);
+      vx*=friction;
+      vy*=friction;
+
+      angle+=vx*dt*.08;
+      angle=Math.max(-25,Math.min(25,angle));
+
+      el.style.left=x+"px";
+      el.style.top=y+"px";
+      el.style.transform=`rotate(${angle.toFixed(2)}deg) scale(1.015)`;
+
+      // 날아가다가 쓰레기통에 걸리면 골인
+      if(overlapsBin(el)){
+        el.classList.remove("coasting","wallHit");
+        el._throwRAF=null;
+
+        bin.classList.remove("aimPulse");
+        void bin.offsetWidth;
+        bin.classList.add("aimPulse");
+        setTimeout(()=>bin.classList.remove("aimPulse"),360);
+
+        dropTrash(el);
+        return;
+      }
+
+      const speed=Math.hypot(vx,vy);
+      const elapsed=now-started;
+
+      // 충분히 감속하면 잠깐 멈춘 뒤 원래 자리로 복귀
+      if(speed<0.045 || elapsed>2600){
+        el.classList.remove("coasting","wallHit");
+        el._throwRAF=null;
+        setTimeout(()=>resetOne(el),100);
+        return;
+      }
+
+      el._throwRAF=requestAnimationFrame(frame);
+    };
+
+    el._throwRAF=requestAnimationFrame(frame);
+  }
+
   function overlapsBin(el){
     const t=el.getBoundingClientRect(),b=bin.getBoundingClientRect();
     const cx=t.left+t.width/2,cy=t.top+t.height/2;
-    return cx>b.left-25&&cx<b.right+25&&cy>b.top-42&&cy<b.bottom+22;
+    return cx>b.left-8&&cx<b.right+8&&cy>b.top-30&&cy<b.bottom+12;
   }
   function resetOne(el){
-    el.classList.remove("dropping");
+    if(el._throwRAF){
+      cancelAnimationFrame(el._throwRAF);
+      el._throwRAF=null;
+    }
+    el.classList.remove("dropping","coasting","wallHit");
     el.classList.add("returning");
     el.style.left=el.dataset.homeX+"px";
     el.style.top=el.dataset.homeY+"px";
@@ -807,6 +1207,13 @@ html,body{
 
   function dropTrash(el){
     if(el.dataset.dropped==="true")return;
+
+    if(el._throwRAF){
+      cancelAnimationFrame(el._throwRAF);
+      el._throwRAF=null;
+    }
+
+    el.classList.remove("coasting","wallHit");
     el.dataset.dropped="true";
     el.classList.add("dropping");
     pulseBin();
@@ -824,7 +1231,11 @@ html,body{
 
     remaining--;
     renderRemaining();
-    if(remaining<=0)setTimeout(completeRound,430);
+
+    const isFinal=remaining<=0;
+    playDropFX(isFinal);
+
+    if(isFinal)setTimeout(completeRound,760);
   }
   function completeRound(){
     locked=true;data.visitors++;save();renderStats();
