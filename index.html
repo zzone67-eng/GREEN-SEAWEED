@@ -153,6 +153,7 @@ h1 .green{color:var(--green-dark)}
   min-height:0;
   overflow:hidden;
   touch-action:none;
+  padding-bottom:30px;
 }
 .posterWords{
   position:absolute;
@@ -192,7 +193,7 @@ h1 .green{color:var(--green-dark)}
   font-weight:1000;
   line-height:.8;
   letter-spacing:-.08em;
-  color:rgba(16,23,19,.035);
+  color:rgba(16,23,19,.022);
   pointer-events:none;
 }
 
@@ -202,7 +203,7 @@ h1 .green{color:var(--green-dark)}
   left:4%;
   top:12%;
   width:92%;
-  height:43%;
+  height:40%;
   overflow:visible;
   pointer-events:none;
 }
@@ -214,25 +215,84 @@ h1 .green{color:var(--green-dark)}
   border-radius:clamp(20px,3.3vw,26px);
   background:var(--white);
   box-shadow:clamp(5px,1vw,8px) clamp(5px,1vw,8px) 0 var(--ink);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
   cursor:grab;
   pointer-events:auto;
   touch-action:none;
   -webkit-user-select:none;
   user-select:none;
-  transition:transform .13s ease,box-shadow .13s ease,opacity .18s ease;
+  will-change:left,top,transform,opacity;
+  transition:box-shadow .16s ease;
+}
+/* 카드 안쪽만 미세하게 떠다니게 해 위치/드래그 좌표에는 영향이 없도록 함 */
+.trashCardInner{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  border-radius:inherit;
+  transform-origin:center;
+  will-change:transform;
+  animation:trashFloat var(--idleDur,3.4s) ease-in-out var(--idleDelay,0s) infinite alternate;
 }
 /* 카드 안의 글자/아이콘이 터치 타깃을 가로채지 않게 함 */
 .trashCard *{pointer-events:none !important;-webkit-user-select:none !important;user-select:none !important}
-.trashCard::before{content:"";position:absolute;right:9px;top:9px;width:12px;height:12px;border-radius:50%;background:var(--green);border:2px solid var(--ink);pointer-events:none}
-.trashCard.dragging{cursor:grabbing;transform:rotate(4deg) scale(1.035)!important;box-shadow:10px 10px 0 var(--ink);transition:none}
+.trashCard::before{content:"";position:absolute;right:9px;top:9px;width:12px;height:12px;border-radius:50%;background:var(--green);border:2px solid var(--ink);pointer-events:none;z-index:3}
+
+@keyframes trashFloat{
+  0%{transform:translate3d(0,0,0) rotate(-.7deg)}
+  50%{transform:translate3d(var(--floatX,2px),-5px,0) rotate(.8deg)}
+  100%{transform:translate3d(calc(var(--floatX,2px) * -1),2px,0) rotate(-.3deg)}
+}
+@keyframes returnWobble{
+  0%{transform:translateY(-5px) scale(1.03)}
+  45%{transform:translateY(3px) scale(.97)}
+  72%{transform:translateY(-2px) scale(1.015)}
+  100%{transform:translateY(0) scale(1)}
+}
+@keyframes binReceive{
+  0%{transform:scale(1)}
+  38%{transform:scale(.965) translateY(4px)}
+  70%{transform:scale(1.025) translateY(-2px)}
+  100%{transform:scale(1)}
+}
+@keyframes slotFlash{
+  0%,100%{box-shadow:none}
+  45%{box-shadow:0 0 0 7px rgba(56,227,108,.22),0 0 28px rgba(56,227,108,.55)}
+}
+
+.trashCard.dragging{
+  cursor:grabbing;
+  box-shadow:12px 14px 0 rgba(16,23,19,.96),0 22px 36px rgba(16,23,19,.14);
+  transition:box-shadow .14s ease;
+}
+.trashCard.dragging .trashCardInner{
+  animation:none;
+  transform:translateY(-10px) scale(1.055);
+  transition:transform .16s cubic-bezier(.2,.9,.2,1.25);
+}
+.trashCard.returning{
+  transition:left .46s cubic-bezier(.34,1.56,.64,1),top .46s cubic-bezier(.34,1.56,.64,1),transform .46s cubic-bezier(.34,1.56,.64,1),box-shadow .3s ease;
+}
+.trashCard.returning .trashCardInner{
+  animation:returnWobble .46s cubic-bezier(.2,.9,.25,1) both;
+}
+.trashCard.dropping{
+  pointer-events:none;
+  transition:left .36s cubic-bezier(.2,.72,.2,1),top .36s cubic-bezier(.2,.72,.2,1),transform .36s cubic-bezier(.2,.72,.2,1),opacity .30s ease;
+}
+.trashCard.dropping .trashCardInner{
+  animation:none;
+  transform:scale(.86);
+}
 .trashCard.hidden{pointer-events:none;opacity:0}
 .trashCard .label{font-size:clamp(9px,1.45vw,11px);font-weight:950;letter-spacing:.06em}
 .trashCard .sub{font-size:clamp(7px,1.1vw,8px);color:var(--muted);font-weight:900;letter-spacing:.08em}
+
+.bin.receiving{animation:binReceive .38s cubic-bezier(.2,.8,.2,1)}
+.bin.receiving .slot{animation:slotFlash .38s ease}
 
 .trashIcon{position:relative;display:block;transform:scale(clamp(.80,1.7vw,.95));transform-origin:center}
 .bottle .trashIcon{width:40px;height:76px}
@@ -259,17 +319,10 @@ h1 .green{color:var(--green-dark)}
 .wrapper .zig1,.wrapper .zig2{position:absolute;top:15px;width:10px;height:10px;border-top:4px solid var(--ink);border-bottom:4px solid var(--ink)}
 .wrapper .zig1{left:2px;border-left:4px solid var(--ink);transform:skewX(-20deg)} .wrapper .zig2{right:2px;border-right:4px solid var(--ink);transform:skewX(20deg)}
 
-.swipe{
-  position:absolute;left:50%;top:53%;transform:translate(-50%,-50%);
-  font-size:clamp(34px,6vw,48px);font-weight:300;opacity:.75;pointer-events:none;
-  animation:nudge 1.8s ease-in-out infinite;
-}
-@keyframes nudge{50%{transform:translate(-50%,-38%)}}
-
 .binWrap{
   position:absolute;
   left:50%;
-  bottom:1.4%;
+  bottom:calc(30px + 2.2%);
   transform:translateX(-50%);
   width:min(70%,520px);
   height:38%;
@@ -300,7 +353,30 @@ h1 .green{color:var(--green-dark)}
 .binText{text-align:center;color:white;line-height:.88;pointer-events:none}
 .binText strong{display:block;font-size:clamp(34px,min(7vw,5.3dvh),58px);letter-spacing:-.08em;font-weight:1000}
 .binText span{display:block;margin-top:10px;font-size:clamp(7px,1.2vw,10px);letter-spacing:.15em;font-weight:900;color:#A8B2AC}
-.cornerNote{position:absolute;left:18px;right:18px;bottom:6px;font-size:clamp(6px,.9vw,8px);color:var(--muted);font-weight:700;text-align:center;line-height:1.3;pointer-events:none}
+.playFooter{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:30px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 12px;
+  border-top:1.5px solid rgba(16,23,19,.14);
+  background:rgba(255,255,255,.58);
+  backdrop-filter:blur(4px);
+  pointer-events:none;
+}
+.cornerNote{
+  position:static;
+  font-size:clamp(6px,.9vw,8px);
+  color:var(--muted);
+  font-weight:700;
+  text-align:center;
+  line-height:1.2;
+  pointer-events:none
+}
 
 .success{position:absolute;inset:0;z-index:20;background:var(--green);display:none;touch-action:none}
 .success.show{display:block;animation:reveal .3s cubic-bezier(.2,.8,.2,1)}
@@ -345,6 +421,12 @@ h1 .green{color:var(--green-dark)}
   .trashCluster{left:3%;width:94%}
   .binWrap{width:76%}
 }
+
+@media (prefers-reduced-motion: reduce){
+  .trashCardInner{animation:none !important}
+  .trashCard,.trashCardInner,.bin{transition-duration:.01ms !important;animation-duration:.01ms !important}
+}
+
 </style>
 </head>
 <body>
@@ -371,7 +453,7 @@ h1 .green{color:var(--green-dark)}
         <div class="remainingBadge" id="remainingBadge">REMAINING <strong id="remainingCount">6</strong></div>
         <div class="bigGhost">DROP</div>
         <div class="trashCluster" id="trashCluster"></div>
-        <div class="swipe">↓</div>
+        
         <div class="binWrap">
           
           <div class="bin" id="bin">
@@ -379,7 +461,7 @@ h1 .green{color:var(--green-dark)}
             <div class="binText"><strong>DROP<br>HERE</strong><span>GREEN ACTION BIN</span></div>
           </div>
         </div>
-        <div class="cornerNote">※ CO₂ 감소량은 전시 체험을 위해 평균값을 기준으로 환산한 예상 수치입니다.</div>
+        <div class="playFooter"><div class="cornerNote">※ CO₂ 감소량은 전시 체험을 위해 평균값을 기준으로 환산한 예상 수치입니다.</div></div>
       </section>
     </main>
   </div>
@@ -489,8 +571,13 @@ h1 .green{color:var(--green-dark)}
     const el=document.createElement("div");
     el.className="trashCard "+def.type;
     el.dataset.homeX=home.x;el.dataset.homeY=home.y;el.dataset.homeR=home.r;el.dataset.dropped="false";
-    el.style.left=home.x+"px";el.style.top=home.y+"px";el.style.transform=`rotate(${home.r}deg)`;
-    el.innerHTML=`<div class="trashIcon">${iconExtra(def.type)}</div><div class="label">${def.label}</div><div class="sub">${def.sub}</div>`;
+    el.style.left=home.x+"px";
+    el.style.top=home.y+"px";
+    el.style.transform=`rotate(${home.r}deg)`;
+    el.style.setProperty("--idleDelay",(-Math.random()*2.4).toFixed(2)+"s");
+    el.style.setProperty("--idleDur",(3.0+Math.random()*1.7).toFixed(2)+"s");
+    el.style.setProperty("--floatX",((Math.random()>.5?1:-1)*(1.5+Math.random()*2.5)).toFixed(1)+"px");
+    el.innerHTML=`<div class="trashCardInner"><div class="trashIcon">${iconExtra(def.type)}</div><div class="label">${def.label}</div><div class="sub">${def.sub}</div></div>`;
     bindTrash(el);return el;
   }
 
@@ -507,7 +594,10 @@ h1 .green{color:var(--green-dark)}
       e.preventDefault();e.stopPropagation();
       dragging=true;activeTrash=el;
       const rect=el.getBoundingClientRect();grabX=e.clientX-rect.left;grabY=e.clientY-rect.top;
+      lastPointerX=e.clientX;lastPointerY=e.clientY;lastPointerTime=performance.now();dragAngle=Number(el.dataset.homeR)||0;
+      el.classList.remove("returning","dropping");
       el.classList.add("dragging");el.style.zIndex=30;
+      el.style.transform=`rotate(${dragAngle}deg) scale(1.035)`;
       try{el.setPointerCapture(e.pointerId)}catch(_){}
     },{passive:false});
 
@@ -519,7 +609,18 @@ h1 .green{color:var(--green-dark)}
       const minX=paneRect.left-clusterRect.left,minY=paneRect.top-clusterRect.top;
       const maxX=paneRect.right-clusterRect.left-el.offsetWidth,maxY=paneRect.bottom-clusterRect.top-el.offsetHeight;
       x=Math.max(minX,Math.min(maxX,x));y=Math.max(minY,Math.min(maxY,y));
-      el.style.left=x+"px";el.style.top=y+"px";el.style.transform="rotate(4deg)";
+
+      const now=performance.now();
+      const dt=Math.max(8,now-lastPointerTime);
+      const vx=(e.clientX-lastPointerX)/dt;
+      const targetAngle=Math.max(-9,Math.min(9,vx*18));
+      dragAngle+=(targetAngle-dragAngle)*.32;
+
+      el.style.left=x+"px";
+      el.style.top=y+"px";
+      el.style.transform=`rotate(${dragAngle.toFixed(2)}deg) scale(1.035)`;
+
+      lastPointerX=e.clientX;lastPointerY=e.clientY;lastPointerTime=now;
     },{passive:false});
 
     const finish=e=>{
@@ -539,14 +640,43 @@ h1 .green{color:var(--green-dark)}
     return cx>b.left-25&&cx<b.right+25&&cy>b.top-42&&cy<b.bottom+22;
   }
   function resetOne(el){
-    el.style.left=el.dataset.homeX+"px";el.style.top=el.dataset.homeY+"px";el.style.transform=`rotate(${el.dataset.homeR}deg)`;el.style.zIndex=1;el.style.opacity="1";
+    el.classList.remove("dropping");
+    el.classList.add("returning");
+    el.style.left=el.dataset.homeX+"px";
+    el.style.top=el.dataset.homeY+"px";
+    el.style.transform=`rotate(${el.dataset.homeR}deg) scale(1)`;
+    el.style.zIndex=1;
+    el.style.opacity="1";
+    setTimeout(()=>el.classList.remove("returning"),480);
   }
+
+  function pulseBin(){
+    bin.classList.remove("receiving");
+    void bin.offsetWidth;
+    bin.classList.add("receiving");
+    setTimeout(()=>bin.classList.remove("receiving"),420);
+  }
+
   function dropTrash(el){
-    if(el.dataset.dropped==="true")return;el.dataset.dropped="true";
+    if(el.dataset.dropped==="true")return;
+    el.dataset.dropped="true";
+    el.classList.add("dropping");
+    pulseBin();
+
     const b=bin.getBoundingClientRect(),c=trashCluster.getBoundingClientRect();
-    el.style.left=(b.left-c.left+b.width*.36)+"px";el.style.top=(b.top-c.top+b.height*.38)+"px";
-    el.style.transform="scale(.18) rotate(16deg)";el.style.opacity="0";el.classList.add("hidden");
-    remaining--;renderRemaining();if(remaining<=0)setTimeout(completeRound,220);
+    const targetX=b.left-c.left+b.width*.5-el.offsetWidth*.5;
+    const targetY=b.top-c.top+b.height*.18;
+
+    el.style.left=targetX+"px";
+    el.style.top=targetY+"px";
+    el.style.transform="scale(.16) rotate(20deg)";
+    el.style.opacity="0";
+
+    setTimeout(()=>el.classList.add("hidden"),310);
+
+    remaining--;
+    renderRemaining();
+    if(remaining<=0)setTimeout(completeRound,430);
   }
   function completeRound(){
     locked=true;data.visitors++;save();renderStats();
