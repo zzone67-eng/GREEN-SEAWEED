@@ -324,8 +324,8 @@ h1 .green{color:var(--green-dark)}
   left:50%;
   bottom:calc(30px + 2.2%);
   transform:translateX(-50%);
-  width:min(60%,440px);
-  height:35%;
+  width:min(49%,360px);
+  height:31%;
   min-height:0;
   display:flex;
   align-items:flex-end;
@@ -336,10 +336,10 @@ h1 .green{color:var(--green-dark)}
 .bin{
   position:relative;
   z-index:2;
-  width:68%;
-  height:68%;
-  min-height:clamp(145px,18dvh,215px);
-  max-height:235px;
+  width:60%;
+  height:64%;
+  min-height:clamp(118px,15.5dvh,178px);
+  max-height:190px;
   border-radius:clamp(28px,5vw,42px);
   background:var(--ink);
   box-shadow:clamp(8px,1.8vw,12px) clamp(8px,1.8vw,12px) 0 var(--green);
@@ -348,10 +348,10 @@ h1 .green{color:var(--green-dark)}
   justify-content:center;
   pointer-events:auto;
 }
-.bin::before{content:"";position:absolute;top:-25px;width:106%;height:clamp(38px,5.5vw,48px);border:2px solid var(--ink);border-radius:18px;background:var(--green);pointer-events:none}
-.slot{position:absolute;top:-11px;width:64%;height:15px;background:var(--ink);border-radius:999px;pointer-events:none}
+.bin::before{content:"";position:absolute;top:-25px;width:102%;height:clamp(34px,4.8vw,42px);border:2px solid var(--ink);border-radius:18px;background:var(--green);pointer-events:none}
+.slot{position:absolute;top:-11px;width:56%;height:13px;background:var(--ink);border-radius:999px;pointer-events:none}
 .binText{text-align:center;color:white;line-height:.88;pointer-events:none}
-.binText strong{display:block;font-size:clamp(34px,min(7vw,5.3dvh),58px);letter-spacing:-.08em;font-weight:1000}
+.binText strong{display:block;font-size:clamp(30px,min(6.2vw,4.8dvh),50px);letter-spacing:-.08em;font-weight:1000}
 .binText span{display:block;margin-top:10px;font-size:clamp(7px,1.2vw,10px);letter-spacing:.15em;font-weight:900;color:#A8B2AC}
 .playFooter{
   position:absolute;
@@ -840,9 +840,15 @@ html,body{
 
       box: `<div class="trashSvg">
         <svg viewBox="0 0 64 64" aria-hidden="true">
-          <path ${common} fill="${green}" d="M11 23 32 12l21 11v27L32 61 11 50V23Z"/>
-          <path ${common} d="M11 23l21 11 21-11M32 34v27"/>
-          <path ${common} fill="${pale}" d="M11 23 23 8l20 4 10 11-21 11-21-11Z"/>
+          <!-- 택배용 종이상자: 앞면 + 옆면 + 상단면 -->
+          <path ${common} fill="#D8B77A" d="M10 22 31 11l23 10-21 12L10 22Z"/>
+          <path ${common} fill="#C89D59" d="M10 22 33 33v25L10 47V22Z"/>
+          <path ${common} fill="#E5C88E" d="M33 33 54 21v25L33 58V33Z"/>
+          <!-- 테이프 라인 -->
+          <path ${common} fill="#F2DCAD" d="M25 14 38 20 31 24 18 18 25 14Z"/>
+          <path ${common} fill="#F2DCAD" d="M29 31 37 27v25l-4 2-4-2V31Z"/>
+          <!-- 접힘선 -->
+          <path ${common} d="M10 22 33 33 54 21M33 33v25"/>
         </svg>
       </div>`,
 
@@ -1181,7 +1187,7 @@ html,body{
   function overlapsBin(el){
     const t=el.getBoundingClientRect(),b=bin.getBoundingClientRect();
     const cx=t.left+t.width/2,cy=t.top+t.height/2;
-    return cx>b.left-8&&cx<b.right+8&&cy>b.top-30&&cy<b.bottom+12;
+    return cx>b.left+4&&cx<b.right-4&&cy>b.top-18&&cy<b.bottom+4;
   }
   function resetOne(el){
     if(el._throwRAF){
